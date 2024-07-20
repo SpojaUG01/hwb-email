@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="hwb.css">
+        
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuUlHUCnEGkLBrlH4JTCVCOn9iRu2SQ-cLfQ67X33cLTC7qdLUCverwdOV8d_fCap3J70kYvCzOusfKNsEr4ba6RXP2p1H4yQyyU8Uel1MFhOtnktc1zUOy6uU-oYZHR8asB8ux03B3Aisalj76f9ORDbkgi2LVIKHWCanEEhoNlAoEe90_6PWkhx4G-g/s476/hollywoodbets-logo.png" alt="Hollywoodbets Logo">
+        </div>
+        <form action="http://localhost:3000/login" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            
+            <input type="submit" value="Log In">
+        </form>
+        <a href="#">Change Password or Cell Number</a>
+        <a href="#">Register</a>
+        <div class="terms">
+            By logging in you accept and agree to our <a href="#">terms and conditions</a>.
+        </div>
+    </div>
+</body>
+</html>
