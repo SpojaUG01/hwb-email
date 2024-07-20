@@ -1,20 +1,64 @@
 import { serve } from "https://deno.land/std@0.135.0/http/server.ts";
+import { join, extname } from "https://deno.land/std@0.135.0/path/mod.ts";
+import { readFileStr } from "https://deno.land/std@0.135.0/fs/mod.ts";
 
-const handler = async (req: Request): Promise<Response> => {
-  const { pathname } = new URL(req.url);
+const PORT = 8000;
 
-  if (pathname === "/") {
-    return new Response("Hello from Deno!", {
-      headers: { "content-type": "text/plain" },
-    });
-  } else if (pathname === "/api") {
-    return new Response(JSON.stringify({ message: "Hello, API!" }), {
-      headers: { "content-type": "application/json" },
+const server = serve({ port: PORT });
+console.log(`Server running on http://localhost:${PORT}`);
+
+for await (const request of server) {
+  try {
+    let filePath = new URL(request.url, `http://localhost:${PORT}`).pathname;
+
+    // Default to serving `login.html` on root path
+    if (filePath === "/") {
+      filePath = "/views/login.html";
+    } else {
+      // Serve files from the `public` directory if requested
+      if (filePath.startsWith("/public/")) {
+        filePath = `.${filePath}`;
+      } else {
+        filePath = `./views${filePath}`;
+      }
+    }
+
+    const fullPath = join(Deno.cwd(), filePath);
+    const fileExtension = extname(fullPath);
+    let contentType = "text/plain";
+
+    switch (fileExtension) {
+      case ".html":
+        contentType = "text/html";
+        break;
+      case ".css":
+        contentType = "text/css";
+        break;
+      case ".js":
+        contentType = "application/javascript";
+        break;
+      // Add more cases as needed
+    }
+
+    try {
+      const fileContent = await readFileStr(fullPath);
+      request.respond({
+        status: 200,
+        body: fileContent,
+        headers: new Headers({
+          "Content-Type": contentType,
+        }),
+      });
+    } catch (e) {
+      request.respond({
+        status: 404,
+        body: "404 Not Found",
+      });
+    }
+  } catch (e) {
+    request.respond({
+      status: 500,
+      body: "500 Internal Server Error",
     });
   }
-
-  return new Response("Not Found", { status: 404 });
-};
-
-console.log("Listening on http://localhost:8000");
-serve(handler, { port: 8000 });
+}
